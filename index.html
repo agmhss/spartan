@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Junior Treasure Hunt Challenge 🗺️</title>
+    <p>Spartan Team, AGMHSS Patteeswaram </p>
+  
+    <style>
+        /* --- EMBEDDED CSS STYLING --- */
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #87CEFA, #4682B4); /* Sky blue gradient */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding-top: 50px;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        h1 {
+            color: #FF6347; /* Tomato Red */
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        .score-display {
+            font-size: 1.1em;
+            color: #4CAF50; /* Green */
+            font-weight: bold;
+        }
+
+        .challenge-box {
+            border: 3px dashed #FFD700; /* Gold */
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 15px;
+        }
+
+        .scrambled-word {
+            font-size: 2.5em;
+            font-weight: 900;
+            color: #007BFF; /* Bright Blue */
+            letter-spacing: 5px;
+            margin: 15px 0;
+            user-select: none; /* Prevent selection */
+        }
+
+        #userGuess {
+            padding: 10px;
+            font-size: 1.2em;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            width: 80%;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        #submitBtn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.1em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #submitBtn:hover {
+            background-color: #45a049;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            font-size: 1.1em;
+            font-weight: bold;
+            min-height: 25px; /* Ensures layout doesn't jump */
+        }
+
+        .hall-of-fame {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+        }
+
+        .hall-of-fame h2 {
+            color: #DAA520; /* Gold */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Word Wizard Challenge! ✨</h1>
+        <p class="score-display">
+            Current Score: <span id="currentScore">0</span> | 
+            **Personal Best:** <span id="bestScore">0</span>
+        </p>
+
+        <div class="challenge-box">
+            <p class="clue" id="clue">Clue: Loading...</p>
+            <div class="scrambled-word" id="scrambledWord">---</div>
+            <input type="text" id="userGuess" placeholder="Type the word here..." autofocus>
+            <button id="submitBtn">Check Answer!</button>
+            <p class="feedback" id="feedback"></p>
+        </div>
+
+        <div class="hall-of-fame">
+            <h2>🏆 Hall of Fame Status</h2>
+            <div id="hofMessage">
+                Solve **15 or more words** to beat the challenge and earn your permanent Hall of Fame spot!
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- EMBEDDED JAVASCRIPT LOGIC ---
+        
+        // Simple words for 6-10 year olds
+        const wordList = [
+            { word: "CAT", clue: "An animal that meows and loves milk." },
+            { word: "DOG", clue: "A loyal animal that barks and wags its tail." },
+            { word: "HOUSE", clue: "A place where people live." },
+            { word: "TREE", clue: "A tall plant with leaves, often found in a park." },
+            { word: "BALL", clue: "Something round you can kick or throw." },
+            { word: "APPLE", clue: "A red or green fruit that keeps the doctor away." },
+            { word: "SNAKE", clue: "A long, slithery animal with no legs." },
+            { word: "RIVER", clue: "A large stream of water that flows to the sea." },
+            { word: "TABLE", clue: "You eat your dinner on me." },
+            { word: "SHOE", clue: "You wear me on your feet." }
+        ];
+
+        let currentWord = {};
+        let currentScore = 0;
+        // The HoF entry score is the required score for the first entry (S_Base)
+        const HoF_THRESHOLD = 15; 
+        const BEST_SCORE_KEY = 'juniorTreasureHuntBestScore';
+
+        // Helper function to scramble letters
+        function scramble(word) {
+            let array = word.split('');
+            // Fisher-Yates (Knuth) Shuffle algorithm
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            // Ensures the scrambled word is NOT the original word
+            if (array.join('') === word) {
+                return scramble(word); // Recursive call if it matches
+            }
+            return array.join('');
+        }
+
+        // Function to load a new random and unique puzzle
+        function loadNewPuzzle() {
+            const randomIndex = Math.floor(Math.random() * wordList.length);
+            currentWord = wordList[randomIndex];
+            const scrambled = scramble(currentWord.word);
+
+            // Display the puzzle elements
+            document.getElementById('clue').textContent = `Clue: ${currentWord.clue}`;
+            document.getElementById('scrambledWord').textContent = scrambled;
+            document.getElementById('userGuess').value = '';
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('userGuess').focus();
+        }
+
+        // Function to check the user's answer
+        function checkAnswer() {
+            const userGuess = document.getElementById('userGuess').value.toUpperCase().trim();
+            const feedback = document.getElementById('feedback');
+            const bestScoreElement = document.getElementById('bestScore');
+            const hofMessageElement = document.getElementById('hofMessage');
+
+            if (userGuess === currentWord.word) {
+                currentScore++;
+                feedback.textContent = "🥳 Correct! New word in 2 seconds...";
+                feedback.style.color = 'green';
+                
+                // --- Scoring and HoF Logic ---
+                
+                let bestScore = parseInt(localStorage.getItem(BEST_SCORE_KEY) || 0);
+                
+                // Check for Personal Best
+                if (currentScore > bestScore) {
+                    localStorage.setItem(BEST_SCORE_KEY, currentScore);
+                    bestScoreElement.textContent = currentScore;
+                    
+                    // Check for HoF Requirement (The ultimate reward trigger)
+                    if (currentScore >= HoF_THRESHOLD) {
+                        hofMessageElement.innerHTML = `
+                            🎉 **CHALLENGE COMPLETE!** You earned your Hall of Fame spot with a score of ${currentScore}! 
+                            (In the full system, you now receive your unique **Editable Key**!)
+                        `;
+                        hofMessageElement.style.color = '#DAA520'; // Gold color for success
+                    } else {
+                        feedback.textContent += " New Personal Best! Keep going for the HoF! 🥇";
+                    }
+                } else if (currentScore >= HoF_THRESHOLD) {
+                    // For users who already hit the threshold but didn't beat their overall best
+                    hofMessageElement.textContent = `Excellent run! You matched the HoF requirement, but try to beat your highest score of ${bestScore}!`;
+                    hofMessageElement.style.color = '#007BFF';
+                }
+
+                document.getElementById('currentScore').textContent = currentScore;
+                
+                // Load the next puzzle after a brief delay
+                setTimeout(loadNewPuzzle, 2000); 
+
+            } else {
+                feedback.textContent = "😔 Try again! That's not right.";
+                feedback.style.color = 'red';
+            }
+        }
+
+        // --- INITIALIZATION AND EVENT LISTENERS ---
+
+        function initializeGame() {
+            const bestScore = localStorage.getItem(BEST_SCORE_KEY) || 0;
+            document.getElementById('bestScore').textContent = bestScore;
+            loadNewPuzzle();
+        }
+
+        // Event listener for the submit button
+        document.getElementById('submitBtn').addEventListener('click', checkAnswer);
+
+        // Event listener for the Enter key
+        document.getElementById('userGuess').addEventListener('keyup', (event) => {
+            if (event.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+
+        // Start the game!
+        initializeGame();
+    </script>
+</body>
+</html>
