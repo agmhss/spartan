@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Junior Treasure Hunt Challenge 🗺️</title>
-    <p>Spartan Team, AGMHSS Patteeswaram </p>
-  
+    
     <style>
         /* --- EMBEDDED CSS STYLING --- */
         body {
@@ -54,7 +53,7 @@
             color: #007BFF; /* Bright Blue */
             letter-spacing: 5px;
             margin: 15px 0;
-            user-select: none; /* Prevent selection */
+            user-select: none;
         }
 
         #userGuess {
@@ -86,9 +85,10 @@
             margin-top: 15px;
             font-size: 1.1em;
             font-weight: bold;
-            min-height: 25px; /* Ensures layout doesn't jump */
+            min-height: 25px;
         }
 
+        /* --- Hall of Fame Styling --- */
         .hall-of-fame {
             margin-top: 30px;
             padding: 15px;
@@ -99,12 +99,54 @@
         .hall-of-fame h2 {
             color: #DAA520; /* Gold */
         }
+        
+        .hof-form {
+            background: #FFE0B2; /* Light orange/gold for focus */
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .hof-entry-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+            padding: 10px;
+            border: 2px solid #DAA520;
+            border-radius: 10px;
+            background-color: #fff;
+        }
+
+        .hof-entry-display img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            border: 3px solid #FF6347;
+        }
+
+        .hof-info {
+            text-align: left;
+        }
+
+        .hof-info strong {
+            display: block;
+            font-size: 1.2em;
+            color: #FF6347;
+        }
+        
+        /* Utility to hide the form until needed */
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h1>Word Wizard Challenge! ✨</h1>
+        <h1>Spartan Team, AGMHSS Patteeswaram </h1>
         <p class="score-display">
             Current Score: <span id="currentScore">0</span> | 
             **Personal Best:** <span id="bestScore">0</span>
@@ -119,10 +161,21 @@
         </div>
 
         <div class="hall-of-fame">
-            <h2>🏆 Hall of Fame Status</h2>
+            <h2>🏆 Hall of Fame</h2>
+            
             <div id="hofMessage">
                 Solve **15 or more words** to beat the challenge and earn your permanent Hall of Fame spot!
             </div>
+
+            <div id="hofForm" class="hof-form hidden">
+                <h3>Congratulations! Submit Your Entry!</h3>
+                <input type="text" id="hofName" placeholder="Your Name (Editable Later)" style="width:90%; padding: 8px; margin: 5px;" maxlength="30"><br>
+                <input type="text" id="hofPhotoUrl" placeholder="Image URL (e.g., a cartoon image link)" style="width:90%; padding: 8px; margin: 5px;"><br>
+                <button id="submitHoFEntryBtn" style="background-color: #DAA520; margin-top: 10px;">Save to Hall of Fame!</button>
+            </div>
+            
+            <div id="hofDisplayArea">
+                </div>
         </div>
     </div>
 
@@ -140,29 +193,234 @@
             { word: "SNAKE", clue: "A long, slithery animal with no legs." },
             { word: "RIVER", clue: "A large stream of water that flows to the sea." },
             { word: "TABLE", clue: "You eat your dinner on me." },
-            { word: "SHOE", clue: "You wear me on your feet." }
+            { word: "SHOE", clue: "You wear me on your feet." },
+            
+    // --- 1. Animals and Nature (15) ---
+    { word: "FISH", clue: "I swim in water and have fins." },
+    { word: "BIRD", clue: "I fly in the sky and sing songs." },
+    { word: "FROG", clue: "I am green, jump, and live near water." },
+    { word: "BEAR", clue: "I am big, brown, and love honey." },
+    { word: "WOLF", clue: "I howl at the moon in the forest." },
+    { word: "STAR", clue: "A bright, tiny light you see at night." },
+    { word: "CLOUD", clue: "A white or gray puff floating in the sky." },
+    { word: "FLOWER", clue: "A colorful plant that smells sweet." },
+    { word: "GRASS", clue: "The green carpet on the ground outside." },
+    { word: "LEAF", clue: "I fall from the trees in autumn." },
+    { word: "RABBIT", clue: "A small, furry animal that hops." },
+    { word: "LION", clue: "The king of the jungle with a big mane." },
+    { word: "ZEBRA", clue: "A horse with black and white stripes." },
+    { word: "WHALE", clue: "The largest animal living in the ocean." },
+    { word: "BEACH", clue: "A sandy place next to the sea." },
+
+    // --- 2. Everyday Objects (15) ---
+    { word: "SPOON", clue: "You use me to eat soup or cereal." },
+    { word: "FORK", clue: "I have pointy ends to pick up food." },
+    { word: "CHAIR", clue: "A piece of furniture you sit on." },
+    { word: "DOOR", clue: "You open me to enter a room." },
+    { word: "CLOCK", clue: "I tell you the time with my hands." },
+    { word: "PENCIL", clue: "You use me to write or draw pictures." },
+    { word: "BOOK", clue: "I have pages and tell a story." },
+    { word: "RADIO", clue: "I play music and news with sound." },
+    { word: "SOAP", clue: "You use me to wash your hands." },
+    { word: "TOWEL", clue: "You use me to dry yourself after a bath." },
+    { word: "MUG", clue: "A cup for hot drinks like cocoa." },
+    { word: "COAT", clue: "You wear me outside when it's cold." },
+    { word: "SOCKS", clue: "I cover your feet inside your shoes." },
+    { word: "HAT", clue: "I am worn on your head for warmth or shade." },
+    { word: "WINDOW", clue: "You can look through me to see outside." },
+
+    // --- 3. Actions and Concepts (10) ---
+    { word: "WALK", clue: "To move on your feet, one step at a time." },
+    { word: "JUMP", clue: "To push off the ground quickly." },
+    { word: "READ", clue: "What you do to a book or a sign." },
+    { word: "SING", clue: "To make music with your voice." },
+    { word: "TALK", clue: "What you do when you use words to communicate." },
+    { word: "HAPPY", clue: "How you feel when you smile and laugh." },
+    { word: "COLD", clue: "The opposite of hot, like snow or ice." },
+    { word: "START", clue: "The beginning of a race or a story." },
+    { word: "FINISH", clue: "The end of a race or a task." },
+    { word: "FAST", clue: "Moving quickly, like a cheetah." },
+
+    // --- 4. Food and Drink (10) ---
+    { word: "MILK", clue: "A white drink that comes from a cow." },
+    { word: "JUICE", clue: "A sweet drink made from fruit." },
+    { word: "CAKE", clue: "A sweet dessert often eaten at birthdays." },
+    { word: "CHEESE", clue: "A yellow or white food made from milk." },
+    { word: "PIZZA", clue: "A flat bread with sauce and toppings." },
+    { word: "WATER", clue: "The clear liquid you drink to stay alive." },
+    { word: "SUGAR", clue: "A white, sweet ingredient used in baking." },
+    { word: "EGG", clue: "A round food that comes from a chicken." },
+    { word: "BREAD", clue: "You use me to make a sandwich." },
+    { word: "SOUP", clue: "A warm liquid food eaten with a spoon." }
+
+        
         ];
 
         let currentWord = {};
         let currentScore = 0;
-        // The HoF entry score is the required score for the first entry (S_Base)
         const HoF_THRESHOLD = 15; 
         const BEST_SCORE_KEY = 'juniorTreasureHuntBestScore';
+        const HOF_ENTRY_KEY = 'juniorHoFEntryData'; // New key for the HoF entry
+
+        // Default image for anonymity or if no URL is provided
+        const DEFAULT_IMAGE = 'https://via.placeholder.com/50/FF6347/FFFFFF?text=Anon'; 
 
         // Helper function to scramble letters
         function scramble(word) {
             let array = word.split('');
-            // Fisher-Yates (Knuth) Shuffle algorithm
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [array[i], array[j]] = [array[j], array[i]];
             }
-            // Ensures the scrambled word is NOT the original word
             if (array.join('') === word) {
-                return scramble(word); // Recursive call if it matches
+                return scramble(word); 
             }
             return array.join('');
         }
+
+        // --- NEW: DISPLAY HOF ENTRY ---
+        function renderHoFEntry(entry) {
+            const displayArea = document.getElementById('hofDisplayArea');
+            displayArea.innerHTML = `
+                <div class="hof-entry-display">
+                    <img src="${entry.photoUrl || DEFAULT_IMAGE}" alt="HoF Photo">
+                    <div class="hof-info">
+                        <strong>${entry.name}</strong> 
+                        <span style="color: #666;">High Score: ${entry.score}</span>
+                        <br><button onclick="showHoFForm(true)">Edit My Spot</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('hofMessage').classList.add('hidden'); // Hide challenge message
+        }
+
+        // --- NEW: HOF SUBMISSION ---
+        function showHoFForm(isEditing = false) {
+            const hofForm = document.getElementById('hofForm');
+            const currentEntry = JSON.parse(localStorage.getItem(HOF_ENTRY_KEY));
+
+            // Pre-fill fields if editing
+            if (isEditing && currentEntry) {
+                document.getElementById('hofName').value = currentEntry.name;
+                document.getElementById('hofPhotoUrl').value = currentEntry.photoUrl || '';
+            } else if (!isEditing) {
+                document.getElementById('hofName').value = `Winner-${Math.floor(Math.random() * 100)}`;
+                document.getElementById('hofPhotoUrl').value = '';
+            }
+            
+            hofForm.classList.remove('hidden');
+        }
+
+        function submitHoFEntry() {
+            const nameInput = document.getElementById('hofName').value.trim();
+            const photoUrlInput = document.getElementById('hofPhotoUrl').value.trim();
+            const currentEntry = JSON.parse(localStorage.getItem(HOF_ENTRY_KEY));
+
+            // Use current best score for submission
+            const bestScore = parseInt(localStorage.getItem(BEST_SCORE_KEY) || 0);
+
+            const newEntry = {
+                name: nameInput || "Anonymous Solver",
+                photoUrl: photoUrlInput.startsWith('http') ? photoUrlInput : DEFAULT_IMAGE,
+                score: bestScore,
+                // In a real system, a unique editable key would be generated here
+                editable: true 
+            };
+
+            localStorage.setItem(HOF_ENTRY_KEY, JSON.stringify(newEntry));
+            renderHoFEntry(newEntry);
+            document.getElementById('hofForm').classList.add('hidden');
+            alert(`Congratulations, ${newEntry.name}! Your Hall of Fame entry has been saved.`);
+        }
+
+
+        // --- GAME FUNCTIONS (Updated) ---
+
+        function loadNewPuzzle() {
+            const randomIndex = Math.floor(Math.random() * wordList.length);
+            currentWord = wordList[randomIndex];
+            const scrambled = scramble(currentWord.word);
+
+            document.getElementById('clue').textContent = `Clue: ${currentWord.clue}`;
+            document.getElementById('scrambledWord').textContent = scrambled;
+            document.getElementById('userGuess').value = '';
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('userGuess').focus();
+        }
+
+        function checkAnswer() {
+            const userGuess = document.getElementById('userGuess').value.toUpperCase().trim();
+            const feedback = document.getElementById('feedback');
+            const bestScoreElement = document.getElementById('bestScore');
+            
+            if (userGuess === currentWord.word) {
+                currentScore++;
+                feedback.textContent = "🥳 Correct! New word in 2 seconds...";
+                feedback.style.color = 'green';
+                
+                let bestScore = parseInt(localStorage.getItem(BEST_SCORE_KEY) || 0);
+                
+                // Check for Personal Best and HoF trigger
+                if (currentScore > bestScore) {
+                    localStorage.setItem(BEST_SCORE_KEY, currentScore);
+                    bestScoreElement.textContent = currentScore;
+                    
+                    if (currentScore >= HoF_THRESHOLD) {
+                        const existingEntry = localStorage.getItem(HOF_ENTRY_KEY);
+                        
+                        if (!existingEntry) {
+                            feedback.textContent += " YOU DID IT! Go to the HoF section to enter your name! 🥇";
+                            showHoFForm(false); // Show form for the first time
+                        } else {
+                            // Already in HoF, update the score and allow editing
+                            let entry = JSON.parse(existingEntry);
+                            entry.score = currentScore;
+                            localStorage.setItem(HOF_ENTRY_KEY, JSON.stringify(entry));
+                            renderHoFEntry(entry);
+                            feedback.textContent += " You beat your record! Edit your HoF spot below! 🥇";
+                        }
+                    } else {
+                         feedback.textContent += " New Personal Best! Keep going for the HoF! 🥇";
+                    }
+                }
+
+                document.getElementById('currentScore').textContent = currentScore;
+                setTimeout(loadNewPuzzle, 2000); 
+
+            } else {
+                feedback.textContent = "😔 Try again! That's not right.";
+                feedback.style.color = 'red';
+            }
+        }
+
+        // --- INITIALIZATION AND EVENT LISTENERS ---
+
+        function initializeGame() {
+            const bestScore = localStorage.getItem(BEST_SCORE_KEY) || 0;
+            document.getElementById('bestScore').textContent = bestScore;
+            
+            // Load existing HoF entry if present
+            const savedEntry = localStorage.getItem(HOF_ENTRY_KEY);
+            if (savedEntry) {
+                renderHoFEntry(JSON.parse(savedEntry));
+            }
+
+            loadNewPuzzle();
+        }
+
+        document.getElementById('submitBtn').addEventListener('click', checkAnswer);
+        document.getElementById('submitHoFEntryBtn').addEventListener('click', submitHoFEntry);
+
+        document.getElementById('userGuess').addEventListener('keyup', (event) => {
+            if (event.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+
+        initializeGame();
+    </script>
+</body>
+</html>
 
         // Function to load a new random and unique puzzle
         function loadNewPuzzle() {
